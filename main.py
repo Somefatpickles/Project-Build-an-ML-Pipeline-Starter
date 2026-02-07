@@ -65,10 +65,18 @@ def go(config: DictConfig):
             )
 
         if "data_check" in active_steps:
-            ##################
-            # Implement here #
-            ##################
-            pass
+            # Download raw data, clean data and upload in W&B
+            mlflow.run(
+                os.path.join(hydra.utils.get_original_cwd(), "src", "data_check"),
+                "main",
+                parameters={
+                    "csv": config["main"]["project_name"]+"/"+config["basic_cleaning"]["output_artifact"]+":"+config["main"]["latest_tag"],
+                    "ref": config["main"]["project_name"]+"/"+config["basic_cleaning"]["output_artifact"]+":"+config["main"]["reference_tag"],
+                    "kl_threshold": config["data_check"]["kl_threshold"],
+                    "min_price": config["etl"]["min_price"],
+                    "max_price": config["etl"]["max_price"]
+                }
+            )
 
         if "data_split" in active_steps:
             ##################
