@@ -6,6 +6,7 @@ main:
   experiment_name: development
   steps: all
   latest_tag: "latest"
+  reference_tag: "reference"
 etl:
   sample: "sample1.csv"
   min_price: 10  # dollars
