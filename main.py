@@ -65,7 +65,7 @@ def go(config: DictConfig):
             )
 
         if "data_check" in active_steps:
-            # Download raw data, clean data and upload in W&B
+            # Perform testing on cleaned dataset
             mlflow.run(
                 os.path.join(hydra.utils.get_original_cwd(), "src", "data_check"),
                 "main",
