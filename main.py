@@ -55,7 +55,7 @@ def go(config: DictConfig):
                 os.path.join(hydra.utils.get_original_cwd(), "src", "basic_cleaning"),
                 "main",
                 parameters={
-                    "input_artifact": config["main"]["project_name"]+"/"+config["basic_cleaning"]["input_artifact"]+":"+config["main"]["latest_tag"],
+                    "input_artifact": f"{config["main"]["project_name"]}/{config["basic_cleaning"]["input_artifact"]}:{config["main"]["latest_tag"]}",
                     "output_artifact": config["basic_cleaning"]["output_artifact"],
                     "output_type": "clean_sample",
                     "output_description": "Data with outliers removed and date converted",
@@ -70,8 +70,8 @@ def go(config: DictConfig):
                 os.path.join(hydra.utils.get_original_cwd(), "src", "data_check"),
                 "main",
                 parameters={
-                    "csv": config["main"]["project_name"]+"/"+config["basic_cleaning"]["output_artifact"]+":"+config["main"]["latest_tag"],
-                    "ref": config["main"]["project_name"]+"/"+config["basic_cleaning"]["output_artifact"]+":"+config["main"]["reference_tag"],
+                    "csv": f"{config["main"]["project_name"]}/{config["basic_cleaning"]["output_artifact"]}:{config["main"]["latest_tag"]}",
+                    "ref": f"{config["main"]["project_name"]}/{config["basic_cleaning"]["output_artifact"]}:{config["main"]["reference_tag"]}",
                     "kl_threshold": config["data_check"]["kl_threshold"],
                     "min_price": config["etl"]["min_price"],
                     "max_price": config["etl"]["max_price"]
@@ -84,7 +84,7 @@ def go(config: DictConfig):
                 f"{config['main']['components_repository']}/train_val_test_split",
                 'main',
                 parameters = {
-                    "input": config["main"]["project_name"]+"/"+config["basic_cleaning"]["output_artifact"]+":"+config["main"]["latest_tag"],
+                    "input": f"{config["main"]["project_name"]}/{config["basic_cleaning"]["output_artifact"]}:{config["main"]["latest_tag"]}",
                     "test_size": config["modeling"]["test_size"],
                     "random_seed": config["modeling"]["random_seed"],
                     "stratify_by": config["modeling"]["stratify_by"]
@@ -106,7 +106,7 @@ def go(config: DictConfig):
                 os.path.join(hydra.utils.get_original_cwd(), "src", "train_random_forest"),
                 "main",
                 parameters={
-                    "trainval_artifact": config["main"]["project_name"]+"/"+config["modeling"]["trainval_artifact"]+":"+config["main"]["latest_tag"],
+                    "trainval_artifact": f"{config["main"]["project_name"]}/{config["modeling"]["trainval_artifact"]}:{config["main"]["latest_tag"]}",
                     "val_size": config["modeling"]["val_size"],
                     "random_seed": config["modeling"]["random_seed"],
                     "stratify_by": config["modeling"]["stratify_by"],
@@ -116,14 +116,25 @@ def go(config: DictConfig):
                 }
             )
 
+        # if "test_regression_model" in active_steps:
+        #     # Test best model against the test component of dataset
+        #     _ = mlflow.run(
+        #         f"{config['main']['components_repository']}/test_regression_model",
+        #         'main',
+        #         parameters = {
+        #             "mlflow_model": f"{config["main"]["project_name"]}/{config["modeling"]["output_artifact"]}:{config["main"]["prod_tag"]}",
+        #             "test_dataset": f"{config["main"]["project_name"]}/{config["modeling"]["test_artifact"]}:{config["main"]["latest_tag"]}"
+        #         }
+        #     )  
+
         if "test_regression_model" in active_steps:
             # Test best model against the test component of dataset
             _ = mlflow.run(
-                f"{config['main']['components_repository']}/test_regression_model",
+                os.path.join(f"{config['main']['components_repository']}/test_regression_model"),
                 'main',
                 parameters = {
-                    "mlflow_model": config["main"]["project_name"]+"/"+config["modeling"]["output_artifact"]+":"+config["main"]["prod_tag"],
-                    "test_dataset": config["main"]["project_name"]+"/"+config["modeling"]["test_artifact"]+":"+config["main"]["latest_tag"]
+                    "mlflow_model": "random_forest_export:prod",
+                    "test_dataset": "test_data.csv:latest"
                 }
             )  
 
