@@ -116,25 +116,14 @@ def go(config: DictConfig):
                 }
             )
 
-        # if "test_regression_model" in active_steps:
-        #     # Test best model against the test component of dataset
-        #     _ = mlflow.run(
-        #         f"{config['main']['components_repository']}/test_regression_model",
-        #         'main',
-        #         parameters = {
-        #             "mlflow_model": f"{config["main"]["project_name"]}/{config["modeling"]["output_artifact"]}:{config["main"]["prod_tag"]}",
-        #             "test_dataset": f"{config["main"]["project_name"]}/{config["modeling"]["test_artifact"]}:{config["main"]["latest_tag"]}"
-        #         }
-        #     )  
-
         if "test_regression_model" in active_steps:
             # Test best model against the test component of dataset
             _ = mlflow.run(
-                os.path.join(f"{config['main']['components_repository']}/test_regression_model"),
+                f"{config['main']['components_repository']}/test_regression_model",
                 'main',
                 parameters = {
-                    "mlflow_model": "random_forest_export:prod",
-                    "test_dataset": "test_data.csv:latest"
+                    "mlflow_model": f"{config["main"]["project_name"]}/{config["modeling"]["output_artifact"]}:{config["main"]["prod_tag"]}",
+                    "test_dataset": f"{config["main"]["project_name"]}/{config["modeling"]["test_artifact"]}:{config["main"]["latest_tag"]}"
                 }
             )  
 
