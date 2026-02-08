@@ -7,6 +7,7 @@ main:
   steps: all
   latest_tag: "latest"
   reference_tag: "reference"
+  prod_tag: "prod"
 etl:
   sample: "sample1.csv"
   min_price: 10  # dollars
@@ -32,6 +33,8 @@ modeling:
   trainval_artifact: "trainval_data.csv"
   # Output artifact for random forest training step
   output_artifact: "random_forest_export"
+  # Test artifact for test_regression_model step
+  test_artifact: "test_data.csv"
   # NOTE: you can put here any parameter that is accepted by the constructor of
   # RandomForestRegressor. This is a subsample, but more could be added:
   random_forest:
